@@ -1,0 +1,30 @@
+﻿@{
+    List<Personaje> personajes = ViewData["PERSONAJES"] as List<Personaje>;
+    List<Serie> series = ViewData["SERIES"] as List<Serie>;
+ }
+
+
+<h1>
+    Cambiar Personajes
+</h1>
+
+<form method="POST">
+    <h1> Seleccione una serie:</h1>
+    <select name="idpersonaje">
+        @foreach (Personaje per in personajes)
+        {
+            <option value="@per.IdPersonaje"> @per.Nombre</option>
+        }
+    </select>
+    <h1> Seleccione un personaje:</h1>
+    <select name="idserie">
+        @foreach (Serie ser in series)
+        {
+            <option value="@ser.IdSerie"> @ser.Nombre</option>
+        }
+    </select>
+
+    <button>
+        Cambiar Personaje
+    </button>
+</form>

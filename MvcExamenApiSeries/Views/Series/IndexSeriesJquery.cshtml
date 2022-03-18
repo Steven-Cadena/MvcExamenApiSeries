@@ -1,0 +1,115 @@
+﻿@section Scripts{
+<script>
+/*const { ready } = require("jquery");*/
+
+    var UrlApi = "https://apiexamenseries2022sacg.azurewebsites.net";
+    $(document).ready(function () {
+        CargarTablaSerie();
+
+        $(document).on('click', 'button', function (event) {
+            var idBtn = $(this).attr("id");
+            var idSerie = $(this).attr("name");
+
+            if (idBtn == "personajes") {
+                window.location = "/Series/MostrarPersonajesJquery?idSer=" + idSerie;
+            }
+            else if (idBtn == "eliminar")
+            {
+                var request = "/api/Series/" + idSerie;
+                $.ajax({
+                    url: UrlApi + request,
+                    method: "DELETE",
+                    success: function () {
+                        CargarTablaSerie();
+                    }
+                });
+            }
+        });
+
+        $("#botoninsertar").click(function () {
+            var nombre = $("#cajanombre").val();
+            var imagen = $("#cajaimagen").val();
+            var puntuacion = $("#cajapuntuacion").val();
+            var anio = $("#cajaanio").val();
+            var serie = new Object();
+            serie.nombre = nombre;
+            serie.imagen = imagen;
+            serie.puntuacion = puntuacion;
+            serie.anio = anio;
+            var json = JSON.stringify(serie);
+            var request = "/api/series";
+            $.ajax({
+                url: UrlApi + request,
+                type: "POST",
+                data: json,
+                contentType: "application/json",
+                success: function () {
+                    CargarTablaSerie();
+                }
+            })
+        });
+        
+
+
+        function CargarTablaSerie()
+        {
+            var request = "/api/Series";
+            $.ajax({
+                url: UrlApi + request,
+                methos: "GET",
+                success: function (data) {
+                    var html = "";
+                    $.each(data, function (index, series) {
+                        html += "<tr>";
+                        console.log("dentro con datos.")
+                        console.log(data);
+                        html += "<td>" + series.idSerie + "</td>";
+                        html += "<td>" + series.nombre + "</td>";
+                        html += "<td>" + "<img src='"+ series.imagen + "' style='width:150px;'></td>";
+                        html += "<td>" + series.puntuacion + "</td>";
+                        html += "<td>" + series.anio + "</td>";
+                        html += "<td>" + "<button class='btn btn-success' id='personajes' name="
+                            + series.idSerie + ">Mostrar Personajes</button >"
+                            + "<button class='btn btn-danger' id='eliminar' name="
+                            + series.idSerie + ">Eliminar Serie</button>"
+                            + "</td>";
+                        
+                    });
+                    $("#tablaseries tbody").html(html);
+                }
+            })
+        }
+    });
+</script>
+}
+
+
+
+
+<div class="text-center">
+    <h1>Insertar Serie</h1>
+    <label> Nombre</label>
+    <input type="text" id="cajanombre" class="form-control" />
+    <label> Imagen</label>
+    <input type="text" id="cajaimagen" class="form-control" />
+    <label> Puntuacion</label>
+    <input type="text" id="cajapuntuacion" class="form-control" />
+    <label> Año</label>
+    <input type="text" id="cajaanio" class="form-control" />
+    <button id="botoninsertar" class="btn btn-info">Insertar</button>
+</div>
+<table class="table table-dark" id="tablaseries">
+    <thead>
+        <tr>
+            <th>Id Serie</th>
+            <th>Nombre</th>
+            <th>Imagen</th>
+            <th>Puntuación</th>
+            <th>Año</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+
